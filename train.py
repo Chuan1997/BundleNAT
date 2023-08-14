@@ -234,8 +234,8 @@ if __name__ == '__main__':
     num_user = 8006 # 943+1,8006,2532
     num_item = 32770 # 1682+1,32770,51298
     t1 = time.time()
-    USER, CARD, ITEM_CAND, MATRIX , MASK= load_gen_data1('D:/Business/No.3/TransGen/data/youshu200/rerank_data_train_20020.txt','D:/Business/No.3/TransGen/data/matrix.npy',num_item)
-    USER_t, CARD_t, ITEM_CAND_t, MATRIX_t, MASK_t = load_gen_data1('D:/Business/No.3/TransGen/data/youshu200/rerank_data_test_20020.txt','D:/Business/No.3/TransGen/data/matrix.npy',num_item )
+    USER, CARD, ITEM_CAND, MATRIX , MASK= load_gen_data1('.../rerank_data_train.txt','.../matrix.npy',num_item)
+    USER_t, CARD_t, ITEM_CAND_t, MATRIX_t, MASK_t = load_gen_data1('.../rerank_data_test.txt','.../matrix.npy',num_item )
 
     t2 = time.time() - t1
     print(t2)
@@ -243,7 +243,7 @@ if __name__ == '__main__':
     training_dataset = training_set(USER, CARD, ITEM_CAND,MATRIX, MASK)
     testing_dataset = training_set(USER_t, CARD_t, ITEM_CAND_t,MATRIX_t, MASK_t)
 
-    u_e, i_e = featureread('D:/Business/No.3/TransGen/data/ue.npy','D:/Business/No.3/TransGen/data/ie.npy')
+    u_e, i_e = featureread('.../ue.npy','.../ie.npy')
     logdir='D:/Business/No.3/TransGen/log/'
     gen_train_log_path = 'gen_train_log.txt'
     gen_test_log_path = 'gen_test_log.txt'
