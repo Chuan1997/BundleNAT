@@ -46,21 +46,15 @@ def sparse_mx_to_torch_sparse_tensor(sparse_mx):
 
 def create_matrix(sim,n):
     matrix = torch.cosine_similarity(sim.unsqueeze(2), sim.unsqueeze(1), dim=-1).cpu()
-    # matrix = cosine_similarity(sim.cpu(), sim.cpu())
     mask = np.argpartition(matrix, -n, axis=1) < matrix.shape[1] - n
     matrix[mask] = 0
-    # matrix[~mask]=1
-    # print(matrix)
+
     mat = F.normalize(matrix.view(matrix.size(0), matrix.size(1) * matrix.size(2)), p=1, dim=1)
     mat = mat.view(*matrix.size())
-    # print(mat.shape)
-    # mat=normalize(matrix)
-    # fin_mat=sparse_mx_to_torch_sparse_tensor(mat)
-    # fin_mat=sparse_mx_to_torch_sparse_tensor(sp.csr_matrix(mat.numpy()))
-    # print(fin_mat.shape)
+
     return mat.cuda()
 
-#多头注意力层        # aa=[]            # aa.append(a)
+#多头注意力层
 class MultiHeadAttentionLayer( nn.Module ):
 
     def __init__(self, e_dim, h_dim, n_heads):
@@ -522,15 +516,12 @@ class Transformer4Gen( nn.Module ):
         trigger = self.pool(enc_embs)
 
         outs = self.decoder(trigger, enc_embs)
-        # outs = self.decoder(posi, enc_embs)
-        # out = outs.reshape(outs.size(0),1,-1)
 
-        # logit = self.predict_layer(out)
         logit = self.predict_layer(outs)
         recloss = self.compute_loss(logit, target_idx)
         return recloss
 
-    def inference(self,x, u, target_idx, length, adj, mask):#, mask
+    def inference(self,x, u, target_idx, length, adj, mask):#
         item_embs = self.items(x)
         user_embs = self.users(u)
         uu = torch.stack(self.length * [user_embs], axis=2).squeeze()
@@ -543,7 +534,7 @@ class Transformer4Gen( nn.Module ):
         trigger = self.pool(enc_embs)
         outs = self.decoder(trigger, enc_embs)
         logit = self.predict_layer(outs)
-        _, list_pos = torch.topk(logit, k=20)#5
+        _, list_pos = torch.topk(logit, k=20) # 5
 
         return enc_embs, list_pos
 

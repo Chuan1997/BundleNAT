@@ -27,8 +27,6 @@ def normalize(mx):
 
 def load_user_vocab():
     user_ids = [line.strip() for line in open('.../user_ids.txt', 'r').read().splitlines()]
-    # user_ids = [line.strip() for line in
-    #             open('D:/Business/No.3/TransGen/data/ml100k/user_ids.txt', 'r').read().splitlines()]
     user2idx = {int(user): idx for idx, user in enumerate(user_ids)}
     idx2user = {idx: int(user) for idx, user in enumerate(user_ids)}
     return user2idx, idx2user
@@ -67,7 +65,7 @@ def load_gen_data(file_path, matrix,num_item):
     item2idx, _ = load_item_vocab()
 
     load_dict = np.load(matrix,allow_pickle=True).item()
-    USER, CARD, CARD_IDX, ITEM_CAND, Matrix, MASK= [], [], [], [],[],[] #, LABEL, []
+    USER, CARD, CARD_IDX, ITEM_CAND, Matrix, MASK= [], [], [], [],[],[] #
 
     # data_clean = []
     with open(file_path, 'r') as fin:
@@ -137,48 +135,6 @@ class training_set(Dataset):
     def __getitem__(self, idx):
         return [self.USER[idx], self.CARD[idx], self.ITEM_CAND[idx],self.Matrix[idx],self.MASK[idx]]
 
-def load_gen_data_NCF(file_path,num_item):
-    user2idx, _ = load_user_vocab()
-    item2idx, _ = load_item_vocab()
-
-    USER, CARD, CARD_IDX, ITEM_CAND, MASK, USERl= [], [], [], [],[],[]
-
-    # data_clean = []
-    with open(file_path, 'r') as fin:
-        for line in fin:
-            strs = line.strip().split('\t')
-            USER.append(int(strs[0]))
-            USERl.append([int(strs[0])]*100)
-            # USERl.append([int(strs[0])] * 200)
-            card_ = [int(x) for x in strs[1].split(',')]
-            CARD.append(card_)
-            item_cand_ = sorted([int(x) for x in strs[2].split(',')])
-            ITEM_CAND.append(item_cand_) # sorted
-            # Matrix.append(norm_matrix)
-
-            indexs = np.array(item_cand_)  # 标签索引
-            label = np.zeros((1,num_item), dtype=np.int32)  # 创建具有10个标签的onehot
-            label[:,indexs] = 1
-            MASK.append(label)
-
-    return np.array(USER), np.array(CARD), np.array(ITEM_CAND), np.array(MASK), np.array(USERl) #, np.array(Matrix)
-
-
-
-class training_set_NCF(Dataset):
-    def __init__(self, USER, CARD, ITEM_CAND, MASK,  USERl):#Matrix,
-        self.USER = USER
-        self.CARD = CARD
-        self.ITEM_CAND = ITEM_CAND
-        #self.Matrix = Matrix
-        self.MASK = MASK
-        self.USERl = USERl
-
-    def __len__(self):
-        return len(self.USER)
-
-    def __getitem__(self, idx):
-        return [self.USER[idx], self.CARD[idx], self.ITEM_CAND[idx],self.MASK[idx],self.USERl[idx]] #,self.Matrix[idx]
 
 def label_smoothing(inputs, epsilon=0.1):
     '''Applies label smoothing. See https://arxiv.org/abs/1512.00567.
@@ -217,7 +173,7 @@ def label_smoothing(inputs, epsilon=0.1):
     K = inputs.get_shape().as_list()[-1]  # number of channels
     return ((1 - epsilon) * inputs) + (epsilon / K)
 
-import torch
+
 def featureread(path1, path2):
     t1 = np.load(path1, allow_pickle=True)
     t2 = np.load(path2, allow_pickle=True)
